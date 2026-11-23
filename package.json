@@ -1,6 +1,6 @@
 {
-  "name": "dsh-sidechat",
-  "version": "0.1.0-dev.6",
+  "name": "@jonge/dsh-sidechat",
+  "version": "0.1.0-dev.7",
   "private": false,
   "description": "Side Chat: ask focused questions alongside any conversation without interrupting it.",
   "type": "module",

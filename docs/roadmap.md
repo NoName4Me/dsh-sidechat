@@ -1,6 +1,6 @@
 # 开发进度与验收
 
-> 当前目标：**旁敲侧击 / Side Chat** `0.1.0-dev.6`，适配 **DSH 0.2.2-rc.5**。以下「已实现」指代码与相关自动化检查通过，**不代表 Desktop 实机验收**。
+> 当前目标：**旁敲侧击 / Side Chat** `0.1.0-dev.7`，适配 **DSH 0.2.2-rc.5**。以下「已实现」指代码与相关自动化检查通过，**不代表 Desktop 实机验收**。
 
 ## 已实现
 
@@ -13,7 +13,7 @@
 | 原生侧边栏 | 已实现 / Desktop 待验收 | 唯一目录、标题搜索、对话记录、自动增高的输入区 |
 | 对话管理 | 已实现 / Desktop 待验收 | 多轮追问、取消、归档/恢复、升格、摘要请求 |
 | 原文与回流 | 已实现 / Desktop 待验收 | 选区/整条回复定位高亮、复制、插入主会话草稿 |
-| 发布准备 | 已实现 / 首发未确认 | 不带 scope 的 `dsh-sidechat`、手动 npmjs.org workflow |
+| 发布准备 | 已实现 / 首发未确认 | `@jonge/dsh-sidechat`、手动 npmjs.org workflow |
 
 ## 正式发布前必须验收
 
@@ -25,7 +25,7 @@
 - [ ] 重启 DSH 后恢复侧聊，归档/恢复和升格后 Session 可见性正确。
 - [ ] 主对话草稿回填**不自动发送**；权限与 Session 归属无法绕过。
 - [ ] 深色/浅色、窄窗口和减少动画设置下布局正常。
-- [ ] 首次发布 `dsh-sidechat` 到 npmjs.org，核对公开包内容和 dist-tag，并配置可信发布。
+- [ ] 首次发布 `@jonge/dsh-sidechat` 到 npmjs.org，核对公开包内容和 dist-tag，并配置可信发布。
 
 ## 后续增强（不阻塞当前预览版）
 
@@ -36,7 +36,7 @@
 
 ## 当前工程约束
 
-- 只维护新名称：`dsh-sidechat`、`/sidechat`、`state/sidechat.json`、`session-sidechat-`。
+- npm 包名为 `@jonge/dsh-sidechat`。运行时标识包括 `dsh-sidechat`、`/sidechat`、`state/sidechat.json`、`session-sidechat-`。
 - 已取消另一套悬浮圆点目录；侧聊的唯一目录位于 DSH 原生右 Sidebar。
 - 发布工作流**只手动运行**，默认在 npmjs.org 使用 `dev` 预发布标签。
 - 不为未正式发布的旧试验包维护存储路径、模块 ID 或 Session ID 的兼容代码。

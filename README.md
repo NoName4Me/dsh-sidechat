@@ -6,9 +6,9 @@
 
 - **产品名称**：旁敲侧击（Side Chat）
 - **功能按钮**：侧聊
-- **npm 包名**：`dsh-sidechat`（不带 scope）
+- **npm 包名**：`@jonge/dsh-sidechat`
 - **目标 DSH 版本**：`0.2.2-rc.5`
-- **当前版本**：`0.1.0-dev.6`（开发预览版，尚未完成 Desktop 端到端验收）
+- **当前版本**：`0.1.0-dev.7`（开发预览版，尚未完成 Desktop 端到端验收）
 
 ## 核心功能
 
@@ -24,12 +24,12 @@
 **公开 npm 包首次发布成功后**，在 DSH Desktop 打开「插件」→「添加插件」，使用默认 npm 安装源输入：
 
 ```text
-dsh-sidechat@dev
+@jonge/dsh-sidechat@dev
 ```
 
-也可以指定版本：`dsh-sidechat@0.1.0-dev.6`。安装启用后，按需重新启动 Desktop。
+也可以指定版本：`@jonge/dsh-sidechat@0.1.0-dev.7`。安装启用后，按需重新启动 Desktop。
 
-> 当前仓库**已配置 npmjs.org 手动发布流程**，但这不等于包已发布成功。发布状态请到 [npm 包页面](https://www.npmjs.com/package/dsh-sidechat) 核实。此包无需 GitHub Packages Token，也不使用 `@noname4me` 前缀。
+> 当前仓库**已配置 npmjs.org 手动发布流程**，但这不等于包已发布成功。发布状态请到 [npm 包页面](https://www.npmjs.com/package/@jonge/dsh-sidechat) 核实。
 
 ## 从源码开发
 
@@ -61,7 +61,7 @@ pnpm check:manifest
 
 [GitHub Actions：Publish to npmjs.org](https://github.com/NoName4Me/dsh-sidechat/actions/workflows/publish-npm.yml) 仅支持手动运行，发布目标固定为公开 npm Registry。
 
-1. **首次发布**：在 npmjs.com 确保包名可用，并准备具有发布权限的 npm Token；将其配置为仓库 Actions Secret `NPM_TOKEN`，运行工作流时选择 `npm-token`。请遵守 npm 当前的 2FA / Token 发布限制。
+1. **首次发布**：在 npmjs.com 确认账号有权向 `@jonge` scope 发布，并准备具有发布权限的 npm Token；将其配置为仓库 Actions Secret `NPM_TOKEN`，运行工作流时选择 `npm-token`。请遵守 npm 当前的 2FA / Token 发布限制。
 2. **后续发布**：在 npm 包设置中为 `NoName4Me/dsh-sidechat` 的 `publish-npm.yml` 配置 [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)，再运行工作流并选择 `oidc`；不需要长期发布 Token。
 3. 预发布版本自动使用 `dev` dist-tag，正式版本使用 `latest`；npm 同一个版本号不能重复发布。
 

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
+import { runInNewContext } from 'node:vm'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve, join } from 'node:path'
 
@@ -16,7 +17,13 @@ assert.equal(pkg.main, manifest.main)
 assert.equal(pkg.exports['./client'], manifest.client.main)
 // The DSH Web/Desktop Client executes as a classic script with a custom loader.
 const client = readFileSync(join(root, pkg.exports['./client']), 'utf8')
-assert.match(client, /^window\.__ModuleLoader__\.load\(\{\s*id:\s*['"]dsh-sidechat['"]/)
+const registrations = []
+runInNewContext(client, {
+  window: { __ModuleLoader__: { load: registration => registrations.push(registration) } },
+})
+assert.equal(registrations.length, 1)
+assert.equal(registrations[0].id, pkg.name, 'Client registration must match the npm package name')
+assert.equal(typeof registrations[0].factory, 'function')
 assert.match(client, /factory:\s*\(require\)\s*=>\s*\{/)
 assert.match(client, /return module\.exports;\s*}\s*\}\);/)
 assert.doesNotMatch(client, /(^|\n)\s*(?:import\s|export\s)/u, 'client output must not be a bare ESM file')

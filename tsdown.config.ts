@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsdown'
+import pkg from './package.json' with { type: 'json' }
 
 export default defineConfig([
   {
@@ -21,7 +22,7 @@ export default defineConfig([
     outputOptions: {
       entryFileNames: 'client.js',
       codeSplitting: false,
-      banner: "window.__ModuleLoader__.load({ id: 'dsh-sidechat', factory: (require) => {",
+      banner: `window.__ModuleLoader__.load({ id: ${JSON.stringify(pkg.name)}, factory: (require) => {`,
       intro: 'var module = { exports: {} }; var exports = module.exports;',
       footer: 'return module.exports; } });',
     },

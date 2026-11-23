@@ -34,7 +34,7 @@ Host 与 Client 必须保持模块边界：Node.js 模块不进入浏览器 Bund
 
 ```js
 window.__ModuleLoader__.load({
-  id: 'dsh-sidechat',
+  id: '@jonge/dsh-sidechat',
   factory: (require) => {
     // bundled client code
     return module.exports
@@ -46,7 +46,7 @@ window.__ModuleLoader__.load({
 
 ### 服务与数据
 
-- 包名、`dsh.plugin.json`、`cordis.patch.yml`、Host/Client 标识统一使用 `dsh-sidechat`。
+- npm 包名为 `@jonge/dsh-sidechat`。DSH 插件 ID 为 `dsh-external/dsh-sidechat`，Cordis ID 为 `dsh-sidechat`，Client Loader ID 与 npm 包名一致。
 - RPC 通道为 `/sidechat`；应遵守 DSH 认证与权限模型。
 - Host 持久化元数据位于 `state/sidechat.json`；新子 Session 前缀为 `session-sidechat-`。
 - 项目未正式发布，无需为未发布的旧包名或存储路径引入迁移代码。
@@ -71,13 +71,13 @@ window.__ModuleLoader__.load({
 
 ## npmjs.org 发布
 
-唯一公开包名：**`dsh-sidechat`**，不带 scope。
+唯一公开包名：**`@jonge/dsh-sidechat`**。
 
 工作流：[`publish-npm.yml`](../.github/workflows/publish-npm.yml)，**仅手动触发**、仅允许主仓库 `master`。它执行类型检查、构建、单元/桥接测试、Manifest 与 npm pack 检查，再发布公开包。
 
 - 首次发布可使用仓库 Secret `NPM_TOKEN`，手动选择 `npm-token`；确保遵循 npm 账户的 2FA 和 token 要求。
 - 完成 npm 包的 Trusted Publishing 配置后选择 `oidc`，使用 GitHub OIDC 替代长期发布 Token。
-- `0.1.0-dev.6` 使用 `dev` 标签；正式版使用 `latest`。已发布的 npm `name@version` 不可覆盖。
+- `0.1.0-dev.7` 使用 `dev` 标签；正式版使用 `latest`。已发布的 npm `name@version` 不可覆盖。
 - 不触发自动发布，也不再使用 GitHub Packages 发布脚本。
 
 参见 [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)。

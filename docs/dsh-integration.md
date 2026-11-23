@@ -1,4 +1,4 @@
-# DSH 0.2.2-rc.5 集成说明
+# DSH 集成说明
 
 > 代码依赖 DeepSeek Harness 0.2.2-rc.5 的公开能力。本文说明**当前实现**，与完整 Desktop 实机验收有所区别。
 
@@ -60,10 +60,10 @@ RPC 封装限制请求体大小，并返回结构化错误。注意不要把 CLI
 
 ### Client 打包格式
 
-Host 为 Node ESM：`lib/index.mjs`。Client **必须**是普通 script 可执行的 DSH 模块工厂，且模块 ID 为 `dsh-sidechat`：
+Host 为 Node ESM：`lib/index.mjs`。Client **必须**是普通 script 可执行的 DSH 模块工厂，且模块 ID 与 npm 包名 `@jonge/dsh-sidechat` 一致：
 
 ```js
-window.__ModuleLoader__.load({ id: 'dsh-sidechat', factory: (require) => {
+window.__ModuleLoader__.load({ id: '@jonge/dsh-sidechat', factory: (require) => {
   // bundled code
   return module.exports
 }})

@@ -6,9 +6,9 @@
 
 - **Product:** Side Chat (旁敲侧击)
 - **UI action:** 侧聊 ("Side Chat")
-- **npm package:** `dsh-sidechat` (unscoped)
+- **npm package:** `@jonge/dsh-sidechat`
 - **Supported DSH target:** `0.2.2-rc.5`
-- **Current version:** `0.1.0-dev.6` — developer preview, not yet fully validated in Desktop.
+- **Current version:** `0.1.0-dev.7` — developer preview, not yet fully validated in Desktop.
 
 ## Features
 
@@ -24,12 +24,12 @@
 **Once the public npm package has been published**, open DSH Desktop → Plugins → Add plugin, choose the default npm registry, and enter:
 
 ```text
-dsh-sidechat@dev
+@jonge/dsh-sidechat@dev
 ```
 
-You can pin `dsh-sidechat@0.1.0-dev.6` instead. Enable the plugin and restart Desktop if needed.
+You can pin `@jonge/dsh-sidechat@0.1.0-dev.7` instead. Enable the plugin and restart Desktop if needed.
 
-> A publishing workflow exists, but that does **not** confirm a public package has been released. Check the [npm package page](https://www.npmjs.com/package/dsh-sidechat) for its actual status. No GitHub Packages token or `@noname4me` scope is needed.
+> A publishing workflow exists, but that does **not** confirm a public package has been released. Check the [npm package page](https://www.npmjs.com/package/@jonge/dsh-sidechat) for its actual status.
 
 ## Develop from source
 
@@ -59,7 +59,7 @@ Metadata is stored in `state/sidechat.json`; new child Sessions use the `session
 
 The [Publish to npmjs.org workflow](https://github.com/NoName4Me/dsh-sidechat/actions/workflows/publish-npm.yml) runs **only on manual dispatch**.
 
-1. **First publish:** verify the package name is available on npmjs.com, configure a publish-capable npm token as the GitHub Actions secret `NPM_TOKEN`, and choose `npm-token`. Follow npm's current two-factor authentication and token requirements.
+1. **First publish:** verify your npm account can publish to the `@jonge` scope, configure a publish-capable npm token as the GitHub Actions secret `NPM_TOKEN`, and choose `npm-token`. Follow npm's current two-factor authentication and token requirements.
 2. **Later releases:** configure [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) for GitHub repository `NoName4Me/dsh-sidechat` and workflow `publish-npm.yml`. Choose `oidc` to avoid storing a long-lived publish token.
 3. Prereleases publish with the `dev` dist-tag; stable versions use `latest`. Published npm versions are immutable.
 

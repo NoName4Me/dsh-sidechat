@@ -1,4 +1,4 @@
 # Loaded as the package's dsh.bundle.patch layer.
 - insert:
     - id: dsh-sidechat
-      name: dsh-sidechat
+      name: '@jonge/dsh-sidechat'

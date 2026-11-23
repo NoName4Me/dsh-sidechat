@@ -11,8 +11,8 @@ This repository is the **Side Chat / 旁敲侧击** plugin for **DeepSeek Harnes
 
 - Product: **旁敲侧击 / Side Chat**.
 - UI action: **侧聊**.
-- GitHub and public npm package: **dsh-sidechat**, no npm scope.
-- DSH plugin ID: `dsh-external/dsh-sidechat`; Cordis / Client loader ID: `dsh-sidechat`.
+- GitHub repository: **dsh-sidechat**. Public npm package: **@jonge/dsh-sidechat**.
+- DSH plugin ID: `dsh-external/dsh-sidechat`; Cordis ID: `dsh-sidechat`. Client Loader ID matches the npm package name.
 - RPC channel: `/sidechat`. Metadata store: `state/sidechat.json`. Child Sessions: `session-sidechat-<id>`.
 - This project has **not** been formally released. Do not implement compatibility shims for unpublished experimental names or storage layouts.
 
@@ -37,7 +37,7 @@ This repository is the **Side Chat / 旁敲侧击** plugin for **DeepSeek Harnes
 
 ## Engineering and release
 
-- Host and Client runtime boundaries must remain separate. Client output must register via `window.__ModuleLoader__.load({ id: 'dsh-sidechat', factory })`, never bare ESM.
+- Host and Client runtime boundaries must remain separate. Client output must register via `window.__ModuleLoader__.load({ id: '@jonge/dsh-sidechat', factory })`, never bare ESM.
 - Use pnpm frozen lockfile. Run `pnpm typecheck`, `pnpm build`, `pnpm test` and `pnpm check:manifest`. Run relevant integration tests and DSH Web smoke for Host/Client changes.
 - Prefer cohesive Conventional Commits; avoid one commit per file.
 - Public npm publishing is **manual only** through [publish-npm.yml](.github/workflows/publish-npm.yml). Never auto-dispatch a publication or introduce a GitHub Packages workflow.

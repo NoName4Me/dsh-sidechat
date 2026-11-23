@@ -49,7 +49,7 @@ jobs:
           node --experimental-transform-types --test integration/*.test.ts
           node scripts/check-manifest.mjs
           npm pack --dry-run --json --ignore-scripts > /tmp/sidechat-pack.json
-          node -e "const p=require('./package.json');if(p.name!=='dsh-sidechat'||p.private||p.publishConfig.registry!=='https://registry.npmjs.org/')throw Error('unsafe package metadata')"
+          node -e "const p=require('./package.json');if(p.name!=='@jonge/dsh-sidechat'||p.private||p.publishConfig.registry!=='https://registry.npmjs.org/')throw Error('unsafe package metadata')"
           node -e "const f=require('/tmp/sidechat-pack.json')[0].files.map(x=>x.path);for(const p of ['lib/client.js','lib/index.mjs','cordis.patch.yml','dsh.plugin.json','icon.svg','locale/en.json','locale/zh.json','README.en.md'])if(!f.includes(p))throw Error('missing '+p)"
       - name: Determine npm dist-tag
         id: npm-tag
@@ -67,7 +67,7 @@ jobs:
             TAG="latest"
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Publishing dsh-sidechat@$VERSION with npm dist-tag $TAG"
+          echo "Publishing @jonge/dsh-sidechat@$VERSION with npm dist-tag $TAG"
       - name: Publish with npm Trusted Publishing (OIDC)
         if: inputs.authentication == 'oidc'
         run: npm publish --ignore-scripts --access public --tag "${{ steps.npm-tag.outputs.tag }}" --registry=https://registry.npmjs.org/

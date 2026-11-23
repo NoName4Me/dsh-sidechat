@@ -70,7 +70,21 @@ jobs:
           echo "Publishing @jonge/dsh-sidechat@$VERSION with npm dist-tag $TAG"
       - name: Publish with npm Trusted Publishing (OIDC)
         if: inputs.authentication == 'oidc'
-        run: npm publish --ignore-scripts --access public --tag "${{ steps.npm-tag.outputs.tag }}" --registry=https://registry.npmjs.org/
+        shell: bash
+        run: |
+          # setup-node's registry-url can leave a placeholder auth token in npmrc.
+          # Remove that credential before invoking npm's GitHub OIDC exchange.
+          if [[ -n "${NPM_CONFIG_USERCONFIG:-}" && -f "$NPM_CONFIG_USERCONFIG" ]]; then
+            sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
+          fi
+          unset NODE_AUTH_TOKEN
+          if [[ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" || -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]]; then
+            echo "GitHub Actions OIDC is unavailable (id-token: write is required)." >&2
+            exit 1
+          fi
+          # npm Trusted Publisher must match NoName4Me/dsh-sidechat,
+          # publish-npm.yml and grant direct 'npm publish' permission.
+          npm publish --ignore-scripts --access public --tag "${{ steps.npm-tag.outputs.tag }}" --registry=https://registry.npmjs.org/
       - name: Bootstrap publish using npm token
         if: inputs.authentication == 'npm-token'
         env:

@@ -2,9 +2,9 @@
 
 This repository is the **Side Chat / 旁敲侧击** plugin for **DeepSeek Harness 0.2.2-rc.5**. Before implementation changes, read:
 
-1. [产品与架构设计](docs/design.md)
-2. [开发规范](docs/development.md)
-3. [DSH 集成说明](docs/dsh-integration.md)
+1. [产品与交互设计](docs/design.md)
+2. [系统架构](docs/architecture.md)
+3. [开发规范](docs/development.md)
 4. [开发进度](docs/roadmap.md)
 
 ## Product identity
@@ -14,7 +14,7 @@ This repository is the **Side Chat / 旁敲侧击** plugin for **DeepSeek Harnes
 - GitHub repository: **dsh-sidechat**. Public npm package: **@jonge/dsh-sidechat**.
 - DSH plugin ID: `dsh-external/dsh-sidechat`; Cordis ID: `dsh-sidechat`. Client Loader ID matches the npm package name.
 - RPC channel: `/sidechat`. Metadata store: `state/sidechat.json`. Child Sessions: `session-sidechat-<id>`.
-- This project has **not** been formally released. Do not implement compatibility shims for unpublished experimental names or storage layouts.
+- The package is public and release-ready. Do not implement compatibility shims for pre-release experimental names or storage layouts.
 
 ## Non-negotiable behavior
 

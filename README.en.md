@@ -1,35 +1,57 @@
-# Side Chat · 旁敲侧击
+<p align="center">
+  <img src="icon.svg" width="76" height="76" alt="Side Chat icon">
+</p>
 
-[简体中文](README.md) | [English](README.en.md)
+<h1 align="center">Side Chat · 旁敲侧击</h1>
 
-**Start a focused, independent conversation beside a DeepSeek Harness reply without interrupting the main thread.**
+<p align="center">
+  <strong>Ask focused questions beside a DeepSeek Harness reply, without interrupting the main thread.</strong><br>
+  Keep the main conversation untouched. Bring content back only when you choose.
+</p>
 
-- **Product:** Side Chat (旁敲侧击)
-- **UI action:** 侧聊 ("Side Chat")
-- **npm package:** `@jonge/dsh-sidechat`
-- **Supported DSH target:** `0.2.2-rc.5`
-- **Current version:** `0.1.0-dev.7` — developer preview, not yet fully validated in Desktop.
+<p align="center">
+  <img alt="DeepSeek Harness 0.2.2-rc.5" src="https://img.shields.io/badge/DSH-0.2.2--rc.5-4F6FE8?style=flat-square">
+  <img alt="npm version" src="https://img.shields.io/npm/v/@jonge/dsh-sidechat?style=flat-square">
+  <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-2E9E6B?style=flat-square">
+</p>
 
-## Features
+<p align="center">
+  <a href="README.md">简体中文</a> | English
+</p>
 
-- **Two entry points:** the action under a completed assistant reply, or the option beside DSH's built-in quote action after selecting text.
-- **Two context modes:** Light supplies focused source context; Fork inherits parent events up to the source's completed turn.
-- **Independent conversations:** ask and follow up in DSH's native right Sidebar without appending messages to the parent Session.
-- **Source anchors:** reopen a side chat from its source reply; jump back and highlight either the selected fragment or the entire reply.
-- **Explicit management and return:** search, archive, restore, promote to a regular Session, copy an answer, or insert a quote into the main conversation **draft** without sending it.
-- **Host-enforced restrictions:** Side Chat agents are denied *all* tool execution by default, including read-only tools.
+<p align="center">
+  <img src="assets/hero.svg" alt="Select part of a reply, open an independent side chat on the right, and insert a quote into the main draft without sending it." width="100%">
+</p>
 
-## Install through DSH Desktop
+## Why Side Chat
 
-**Once the public npm package has been published**, open DSH Desktop → Plugins → Add plugin, choose the default npm registry, and enter:
+- **In place**: start from selected text or the action under a reply, right beside the main conversation.
+- **Context on your terms**: Light focuses on the quotation; Fork inherits main-thread events only up to the source's completed turn.
+- **Main thread stays intact**: each side chat has its own DSH Session, so the parent's messages and context are never altered.
+- **Explicit return**: copy an answer or insert a quote into the main conversation **draft**. Nothing is sent automatically.
+- **Independent promotion**: promote the same child Session to a regular Session when needed; history is not copied, and promotion is not bring-back.
+
+## Capabilities
+
+- **Two entry points**: the side-chat action under an assistant reply, or the option in DSH's native quote capsule after selecting text.
+- **Native right Sidebar**: directory, search, multi-turn conversation, and turn navigation live in DSH's Sidebar, with no extra floating rail.
+- **Source anchors**: jump back and highlight either the whole reply body or the exact selected range, never the turn-tail toolbar.
+- **Lifecycle**: archive, restore, and promote to a regular Session; promoted entries still open their side-chat details and native Session.
+- **Host-enforced boundary**: authorization, parent/child ownership, and tool denial are enforced on the Host. Side-chat agents are denied **all** tools, including read-only tools.
+- **Draft safety**: bring-back uses the native editor's quote insertion. A side chat can never append to or inject into the parent Session implicitly.
+
+## Install
+
+Open DSH Desktop → Plugins → Add plugin, choose the default npm registry, and enter:
 
 ```text
-@jonge/dsh-sidechat@dev
+@jonge/dsh-sidechat
 ```
 
-You can pin `@jonge/dsh-sidechat@0.1.0-dev.7` instead. Enable the plugin and restart Desktop if needed.
+Enable the plugin and restart Desktop if needed.
 
-> A publishing workflow exists, but that does **not** confirm a public package has been released. Check the [npm package page](https://www.npmjs.com/package/@jonge/dsh-sidechat) for its actual status.
+> The installed version and release status are shown on the
+> [npm package page](https://www.npmjs.com/package/@jonge/dsh-sidechat).
 
 ## Develop from source
 
@@ -46,34 +68,27 @@ pnpm test
 pnpm check:manifest
 ```
 
-| Path | Responsibility |
-| --- | --- |
-| `src/client/` | Selection/message actions, right Sidebar, transcript, source navigation |
-| `src/host/` | Authenticated RPC, DSH Agent/Session integration, tool guard |
-| `src/domain/` | Side Chat records, lifecycle, validation, persistence |
-| `src/shared/` | Host–Client channel identifiers |
+| Path          | Responsibility                                                                           |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| `src/client/` | Message/selection actions, right Sidebar, transcript, source navigation, draft insertion |
+| `src/host/`   | Authenticated RPC, DSH Agent/Session lifecycle, tool guard                               |
+| `src/domain/` | Side Chat records, lifecycle, validation, persistence                                    |
+| `src/shared/` | Host–Client channel identifiers                                                          |
 
-Metadata is stored in `state/sidechat.json`; new child Sessions use the `session-sidechat-` prefix. No compatibility layer is maintained for unpublished experimental package names.
-
-## Publish to npmjs.org
-
-The [Publish to npmjs.org workflow](https://github.com/NoName4Me/dsh-sidechat/actions/workflows/publish-npm.yml) runs **only on manual dispatch**.
-
-1. **First publish:** verify your npm account can publish to the `@jonge` scope, configure a publish-capable npm token as the GitHub Actions secret `NPM_TOKEN`, and choose `npm-token`. Follow npm's current two-factor authentication and token requirements.
-2. **Later releases:** configure [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) for GitHub repository `NoName4Me/dsh-sidechat` and workflow `publish-npm.yml`. Choose `oidc` to avoid storing a long-lived publish token.
-3. Prereleases publish with the `dev` dist-tag; stable versions use `latest`. Published npm versions are immutable.
-
-Neither method is triggered automatically by a code push.
-
-## Known limitations
-
-- The side panel currently prioritizes text messages; it does not replicate all native rich-media/tool rendering.
-- Source navigation requires the original parent message to be loaded.
-- Desktop end-to-end acceptance (selection, model follow-ups, restarts, promotion) is still pending.
-- Host upgrades outside the target DSH version range require integration validation.
+Metadata is stored in `state/sidechat.json`; child Sessions use the `session-sidechat-` prefix. Pre-release experimental package identities are not part of the public contract, so no compatibility layer is maintained for them.
 
 ## Documentation
 
-[Design and architecture (中文)](docs/design.md) · [Development conventions (中文)](docs/development.md) · [DSH integration (中文)](docs/dsh-integration.md) · [Milestones (中文)](docs/roadmap.md)
+- [Product and interaction design (中文)](docs/design.md)
+- [System architecture and flows (中文)](docs/architecture.md)
+- [Development conventions (中文)](docs/development.md)
+- [Status and acceptance (中文)](docs/roadmap.md)
+
+## Known limitations
+
+- The side panel prioritizes text messages; it does not replicate all native rich-media or tool-message UI.
+- Source navigation requires the original parent message to be loaded.
+- Basic functionality has been validated locally by the maintainer; broader window sizes, themes, and edge cases will continue to be covered after release.
+- Host upgrades outside the target DSH version range require integration validation.
 
 License: [MIT](LICENSE).

@@ -1,6 +1,6 @@
 {
   "name": "@jonge/dsh-sidechat",
-  "version": "0.1.0-dev.7",
+  "version": "0.1.1",
   "private": false,
   "description": "Side Chat: ask focused questions alongside any conversation without interrupting it.",
   "type": "module",
@@ -22,6 +22,7 @@
     "./locale/*.json": "./locale/*.json"
   },
   "files": [
+    "assets",
     "lib",
     "cordis.patch.yml",
     "dsh.plugin.json",

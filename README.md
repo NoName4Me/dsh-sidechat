@@ -1,35 +1,56 @@
-# 旁敲侧击 · Side Chat
+<p align="center">
+  <img src="icon.svg" width="76" height="76" alt="旁敲侧击 Side Chat 图标">
+</p>
 
-[简体中文](README.md) | [English](README.en.md)
+<h1 align="center">旁敲侧击 · Side Chat</h1>
 
-**在 DeepSeek Harness 主对话旁，针对某段内容开启独立的多轮交流，不打断主线。**
+<p align="center">
+  <strong>在主对话旁，就某段内容展开独立的多轮交流。</strong><br>
+  不打断主线，不改动上下文，回填由你决定。
+</p>
 
-- **产品名称**：旁敲侧击（Side Chat）
-- **功能按钮**：侧聊
-- **npm 包名**：`@jonge/dsh-sidechat`
-- **目标 DSH 版本**：`0.2.2-rc.5`
-- **当前版本**：`0.1.0-dev.7`（开发预览版，尚未完成 Desktop 端到端验收）
+<p align="center">
+  <img alt="DeepSeek Harness 0.2.2-rc.5" src="https://img.shields.io/badge/DSH-0.2.2--rc.5-4F6FE8?style=flat-square">
+  <img alt="npm version" src="https://img.shields.io/npm/v/@jonge/dsh-sidechat?style=flat-square">
+  <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-2E9E6B?style=flat-square">
+</p>
 
-## 核心功能
+<p align="center">
+  <a href="README.en.md">English</a> · 简体中文
+</p>
+
+<p align="center">
+  <img src="assets/hero.svg" alt="在主对话旁选中一段回复，右侧打开独立侧聊；引用回填只进入主对话草稿，不会自动发送。" width="100%">
+</p>
+
+## 为什么是侧聊
+
+- **就地展开**：选中一段回复，或点击回复下方的「侧聊」图标，就在当前主对话右侧开始，不另开窗口。
+- **上下文可选**：Light 只围绕引用讨论；Fork 继承锚点所在**已完成轮次之前**的主线事件。
+- **主线不动**：侧聊有自己的 DSH Session；主对话的消息、顺序和上下文不会因为它而改变。
+- **回流显式**：复制回答，或把引用插入主对话**草稿**；不会自动发送，也不会替你继续主线。
+- **升格独立**：需要长期保留时，把同一个子 Session 升格为正式会话，不复制历史，也不等于回填。
+
+## 核心能力
 
 - **两种入口**：AI 回复下方的「侧聊」图标；选中文字后，在 DSH 原生「引用文本」胶囊中选择「侧聊」。
-- **独立上下文**：Light 模式围绕引用内容对话；Fork 模式继承源消息所在已完成轮次之前的主对话上下文。
-- **侧边交流**：在 DSH 原生右侧 Sidebar 中提问和多轮追问，主对话不被插入或修改。
-- **原文关联**：来源回复旁显示侧聊入口；点击「定位原消息」可滚动并高亮整条回复或指定选区。
-- **管理与回流**：侧聊目录搜索、归档、恢复、升格为正式 Session；复制回答，或手动引用到主对话**草稿**（不自动发送）。
-- **权限边界**：侧聊 Agent 默认禁止执行所有工具，包括只读工具；权限控制在 Host 侧强制执行。
+- **原生侧边栏**：目录、搜索、多轮会话和轮次导航都在 DSH 右侧 Sidebar 中，没有额外的浮动轨道。
+- **来源锚点**：点击「定位并高亮原消息」，回到整条回复正文或原始选区；不会跳到回复底部的操作栏。
+- **完整管理**：归档、恢复、升格为正式 Session；已升格记录仍可打开侧聊详情并跳转正式会话。
+- **Host 强制边界**：授权、父子 Session 归属与工具限制都在 Host 执行；侧聊 Agent 默认拒绝**全部**工具，包括只读工具。
+- **草稿安全**：插入主对话只调用原生编辑器写入草稿；侧聊永远不能隐式向主 Session 追加或注入消息。
 
 ## 安装
 
-**公开 npm 包首次发布成功后**，在 DSH Desktop 打开「插件」→「添加插件」，使用默认 npm 安装源输入：
+在 DSH Desktop 打开「插件」→「添加插件」，使用默认 npm 安装源输入：
 
 ```text
-@jonge/dsh-sidechat@dev
+@jonge/dsh-sidechat
 ```
 
-也可以指定版本：`@jonge/dsh-sidechat@0.1.0-dev.7`。安装启用后，按需重新启动 Desktop。
+安装启用后，按需重新启动 Desktop。
 
-> 当前仓库**已配置 npmjs.org 手动发布流程**，但这不等于包已发布成功。发布状态请到 [npm 包页面](https://www.npmjs.com/package/@jonge/dsh-sidechat) 核实。
+> 安装版本与发布状态以 [npm 包页面](https://www.npmjs.com/package/@jonge/dsh-sidechat) 为准。
 
 ## 从源码开发
 
@@ -46,36 +67,27 @@ pnpm test
 pnpm check:manifest
 ```
 
-代码分层：
+| 路径          | 责任                                                   |
+| ------------- | ------------------------------------------------------ |
+| `src/client/` | 消息与选区入口、右侧面板、历史展示、原文定位、草稿回填 |
+| `src/host/`   | 认证 RPC、DSH Agent/Session 生命周期、权限约束         |
+| `src/domain/` | 侧聊元数据、生命周期、校验、存储                       |
+| `src/shared/` | Client / Host 通道常量                                 |
 
-| 路径 | 责任 |
-| --- | --- |
-| `src/client/` | 消息与选区入口、右侧面板、历史展示、原文定位 |
-| `src/host/` | 认证 RPC、DSH Agent/Session 生命周期、权限约束 |
-| `src/domain/` | 侧聊元数据、生命周期、校验、存储 |
-| `src/shared/` | Client/Host 通道常量 |
-
-侧聊元数据使用独立的 `state/sidechat.json`；子会话 ID 以 `session-sidechat-` 开头。本项目尚未正式发布，不保留旧试验包的存储及安装身份兼容逻辑。
-
-## 发布到 npmjs.org
-
-[GitHub Actions：Publish to npmjs.org](https://github.com/NoName4Me/dsh-sidechat/actions/workflows/publish-npm.yml) 仅支持手动运行，发布目标固定为公开 npm Registry。
-
-1. **首次发布**：在 npmjs.com 确认账号有权向 `@jonge` scope 发布，并准备具有发布权限的 npm Token；将其配置为仓库 Actions Secret `NPM_TOKEN`，运行工作流时选择 `npm-token`。请遵守 npm 当前的 2FA / Token 发布限制。
-2. **后续发布**：在 npm 包设置中为 `NoName4Me/dsh-sidechat` 的 `publish-npm.yml` 配置 [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)，再运行工作流并选择 `oidc`；不需要长期发布 Token。
-3. 预发布版本自动使用 `dev` dist-tag，正式版本使用 `latest`；npm 同一个版本号不能重复发布。
-
-以上步骤**不会自动触发发布**，需要仓库维护者主动执行。
-
-## 当前限制
-
-- Client 主要展示文字消息，尚未实现全部原生富媒体与工具消息 UI。
-- 来源消息必须已在主对话中加载，才能定位和高亮。
-- 实际 Desktop 中的选区、模型多轮、重启恢复与升格需要进一步人工验收。
-- 当前只支持指定 DSH 版本区间，升级宿主前应重新验证。
+元数据使用独立的 `state/sidechat.json`；子 Session ID 以 `session-sidechat-` 开头。早期试验包的存储及安装身份不属于公开契约，不保留兼容逻辑。
 
 ## 文档
 
-[设计与架构](docs/design.md) · [开发规范](docs/development.md) · [DSH 集成](docs/dsh-integration.md) · [进度与验收](docs/roadmap.md)
+- [产品与交互设计](docs/design.md)
+- [系统架构与流程图](docs/architecture.md)
+- [开发规范](docs/development.md)
+- [开发进度与验收](docs/roadmap.md)
+
+## 当前限制
+
+- 侧聊面板以文字消息为主，尚未复刻全部原生富媒体与工具消息 UI。
+- 来源消息必须已在主对话中加载，才能定位和高亮。
+- 维护者已在本地完成基本功能验收；发布后继续回归更多窗口尺寸、主题与边界场景。
+- 当前只支持指定 DSH 版本区间，升级宿主前应重新验证。
 
 许可证：[MIT](LICENSE)。

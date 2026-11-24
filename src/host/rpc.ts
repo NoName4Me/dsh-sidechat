@@ -11,11 +11,16 @@ export interface AuthenticatedPeer {
 export type SideRpcResult =
   | { readonly ok: true; readonly value: unknown }
   | { readonly ok: false; readonly error: { readonly code: string; readonly message: string; readonly details: object } }
+export type HistoryBlock =
+  | { readonly kind: 'text'; readonly text: string }
+  | { readonly kind: 'reasoning'; readonly text: string }
 export interface HistoryItem {
   readonly messageId: string
   readonly role: 'user' | 'assistant'
   readonly text: string
+  readonly blocks: readonly HistoryBlock[]
   readonly seq: number
+  readonly time?: number
 }
 export interface SideChatHistory {
   readonly childSessionId: string

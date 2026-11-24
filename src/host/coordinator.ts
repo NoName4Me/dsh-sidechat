@@ -120,12 +120,12 @@ export class SideChatCoordinator {
     await this.authorize(parentSessionId)
     return this.singleFlight('promote:' + noteId, async () => {
       let note = await this.notes.get(parentSessionId, noteId)
-      if (note.status === 'promoted') return note
       note = await this.ensureBound(parentSessionId, noteId)
       await this.hydrate(note)
       // External promotion can succeed before metadata commit; the port's
       // idempotence contract makes recovery safe on a repeated request.
       const result = await this.sessions.promote(note)
+      if (note.status === 'promoted') return note
       return this.notes.promote(parentSessionId, noteId, requiredId(result.sessionId, 'sessionId'))
     })
   }

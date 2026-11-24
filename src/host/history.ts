@@ -1,7 +1,10 @@
-import type { HistoryReader, SideChatHistory, HistoryItem } from './rpc.ts'
+import type { HistoryBlock, HistoryReader, SideChatHistory, HistoryItem } from './rpc.ts'
 import type { SideChat } from '../domain/types.ts'
 import type { ObservedSession, ObservedEvent } from './dsh-session-adapter.ts'
 import { SideChatError } from '../domain/errors.ts'
+
+const HISTORY_TEXT_LIMIT = 16_000
+const HISTORY_REASONING_LIMIT = 8_000
 
 export interface HistoryRuntime {
   observe(sessionId: string): Promise<ObservedSession>
@@ -28,13 +31,29 @@ function messageOf(event: ObservedEvent): {
   }
 }
 
-function extractText(content: readonly unknown[]): string {
-  const text = content.flatMap(block => {
-    if (!block || typeof block !== 'object') return []
+function extractBlocks(content: readonly unknown[]): HistoryBlock[] {
+  const blocks: HistoryBlock[] = []
+  let remainingText = HISTORY_TEXT_LIMIT
+  let remainingReasoning = HISTORY_REASONING_LIMIT
+  for (const block of content) {
+    if (!block || typeof block !== 'object') continue
     const value = block as { type?: unknown; text?: unknown }
-    return value.type === 'text' && typeof value.text === 'string' ? [value.text] : []
-  }).join('\n')
-  return text.slice(0, 16_000)
+    if (typeof value.text !== 'string' || value.text.length === 0) continue
+    if (value.type !== 'text' && value.type !== 'reasoning') continue
+    const remaining = value.type === 'text' ? remainingText : remainingReasoning
+    if (remaining <= 0) continue
+    const text = value.text.slice(0, remaining)
+    blocks.push({ kind: value.type, text })
+    if (value.type === 'text') remainingText -= text.length
+    else remainingReasoning -= text.length
+  }
+  return blocks
+}
+
+function extractText(blocks: readonly HistoryBlock[]): string {
+  return blocks.filter(block => block.kind === 'text')
+    .map(block => block.text)
+    .join('\n')
 }
 
 export class DshHistoryReader implements HistoryReader {
@@ -59,13 +78,16 @@ export class DshHistoryReader implements HistoryReader {
         const message = messageOf(event)
         if (!message) continue
         if (event.type === 'user/message' && message.source?.kind !== 'user') continue
-        const text = extractText(message.content)
-        if (text.length === 0) continue
+        const blocks = extractBlocks(message.content)
+        const text = extractText(blocks)
+        if (blocks.length === 0) continue
         items.push({
           messageId: message.id,
           role: event.type === 'user/message' ? 'user' : 'assistant',
           text,
+          blocks,
           seq: event.seq,
+          ...(typeof event.time === 'number' ? { time: event.time } : {}),
         })
       }
       return {

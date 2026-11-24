@@ -33,7 +33,7 @@ describe('SideChatService', () => {
     const again = await service.create(input)
     assert.equal(first.id, again.id)
     assert.equal(first.anchor.selectedText, 'Event sourcing')
-    assert.equal(first.title, 'Event sourcing')
+    assert.equal(first.title, '侧聊')
     assert.equal(first.childSessionId, null)
     assert.equal((await service.list('parent-a')).length, 1)
   })

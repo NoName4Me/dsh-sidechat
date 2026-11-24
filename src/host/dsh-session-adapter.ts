@@ -4,6 +4,7 @@ import type { SideSessionPort } from './coordinator.ts'
 
 export interface ObservedEvent {
   readonly seq: number
+  readonly time?: number
   readonly type: string
   readonly data: unknown
 }
@@ -45,6 +46,8 @@ export interface DshRuntimeBridge {
   resume(sessionId: string): Promise<SideAgentHandle>
   archive(sessionId: string): Promise<void>
   unarchive(sessionId: string): Promise<void>
+  /** Attach to the parent's workspace, then publish the Session. */
+  promote(sessionId: string, parentSessionId: string): Promise<void>
   /** True only for DSH's exact not-found classification. */
   isNotFound(error: unknown): boolean
 }
@@ -106,7 +109,8 @@ function forkBoundary(events: readonly ObservedEvent[], note: SideChat): number 
  * - A child has a deterministic, retryable persisted identity.
  * - Archiving hides the Session from the left list when idle.
  * - A followup unarchives before Agent admission; only rearchives after idle.
- * - Promotion unarchives the same Session, keeping its history unchanged.
+ * - Promotion attaches the same Session to the parent's workspace and
+ *   unarchives it, keeping its history unchanged.
  *
  * A browser must never call this class directly; use an authenticated Host API
  * and SideChatCoordinator authorization.
@@ -242,7 +246,7 @@ export class DshSideSessionAdapter implements SideSessionPort {
       await handle.whenIdle()
       await this.serialize('admit:' + sessionId, async () => {
         // The Host metadata commit can fail: repeating promotion is harmless.
-        await this.runtime.unarchive(sessionId)
+        await this.runtime.promote(sessionId, note.parentSessionId)
         this.promoted.add(sessionId)
       })
       return { sessionId }

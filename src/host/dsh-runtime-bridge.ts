@@ -3,12 +3,13 @@
  * official DSH API surfaces; domain and coordinator tests use structural
  * ports without loading any DSH package.
  *
- * Target: DSH 0.2.2-rc.1 (compile/install smoke test pending).
+ * Target: DSH 0.2.2-rc.5.
  */
 import type { Context } from '@deepseek-ai/cordis'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import { SessionId, SessionSeq, SessionLogOffset } from '@deepseek-ai/dsh-session'
 import { buildForkSeed } from '@deepseek-ai/dsh-session/fork'
+import { SideChatError } from '../domain/errors.ts'
 import type { AgentHandle, AgentOptions } from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-agent-default-model'
@@ -136,6 +137,45 @@ export class OfficialDshRuntimeBridge implements DshRuntimeBridge {
 
   unarchive(sessionId: string): Promise<void> {
     return this.ctx.workspaceRegistry.unarchiveSession(SessionId(sessionId))
+  }
+
+  async promote(sessionId: string, parentSessionId: string): Promise<void> {
+    const workspace = await this.parentWorkspace(parentSessionId)
+    if (!workspace) {
+      throw new SideChatError(
+        'INVALID_STATE',
+        'parent session is not attached to a workspace',
+      )
+    }
+    await workspace.attachSession(SessionId(sessionId))
+    await this.ctx.workspaceRegistry.unarchiveSession(SessionId(sessionId))
+  }
+
+  private async parentWorkspace(sessionId: string) {
+    const parentId = SessionId(sessionId)
+    const workspaces = this.ctx.workspaceRegistry.list()
+    const direct = workspaces.find(workspace => workspace.sessionIds.includes(parentId))
+    if (direct) return direct
+
+    try {
+      const lineage = await this.ctx.sessionQuery.traceSession(parentId)
+      for (const ancestor of lineage.ancestors) {
+        const workspace = workspaces.find(candidate =>
+          candidate.sessionIds.includes(ancestor.header.id))
+        if (workspace) return workspace
+      }
+    } catch {
+      // Fall through to the stored header's cwd.
+    }
+
+    const observed = await this.observe(sessionId)
+    try {
+      return observed.header.cwd === undefined
+        ? undefined
+        : workspaces.find(workspace => workspace.path === observed.header.cwd)
+    } finally {
+      observed.release()
+    }
   }
 
   isNotFound(error: unknown): boolean {

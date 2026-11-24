@@ -6,6 +6,12 @@ function mockContext() {
   const guards = []
   const calls = []
   const injected = []
+  const workspace = {
+    id: 'workspace-test',
+    path: '/workspace',
+    sessionIds: ['parent-test'],
+    async attachSession(id) { calls.push(['attach', id]) },
+  }
   let handle
   const agent = {
     id: 'session-sidechat-test',
@@ -32,8 +38,12 @@ function mockContext() {
       },
     },
     workspaceRegistry: {
+      list: () => [workspace],
       async archiveSession(id) { calls.push(['archive', id]) },
       async unarchiveSession(id) { calls.push(['unarchive', id]) },
+    },
+    sessionQuery: {
+      async traceSession() { return { ancestors: [] } },
     },
   }
   return { context, guards, calls, injected }
@@ -72,5 +82,12 @@ describe('OfficialDshRuntimeBridge integration contract', () => {
     await bridge.archive('session-sidechat-test')
     await bridge.unarchive('session-sidechat-test')
     assert.deepEqual(f.calls.map(call => call[0]), ['archive', 'unarchive'])
+  })
+
+  it('attaches a promoted Session to its parent workspace before publishing it', async () => {
+    const f = mockContext()
+    const bridge = new OfficialDshRuntimeBridge(f.context)
+    await bridge.promote('session-sidechat-test', 'parent-test')
+    assert.deepEqual(f.calls.map(call => call[0]), ['attach', 'unarchive'])
   })
 })

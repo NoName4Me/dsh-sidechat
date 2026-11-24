@@ -16,7 +16,14 @@ import { SideChatCatalog } from './catalog.ts'
 import { SideChatMarkers } from './SideChatMarkers.tsx'
 
 export const name = 'dsh-sidechat-client'
-export const inject = ['slots', 'connection', 'uiSession', 'sessions', 'conversation', 'sidebarRight', 'sidebarRightTabs']
+export const inject = [
+  'slots', 'connection', 'uiSession', 'sessions', 'uiWorkspace',
+  'conversation', 'sidebarRight', 'sidebarRightTabs',
+]
+
+interface WorkspaceNavigation {
+  openSession(sessionId: string): void
+}
 
 /**
  * The DSH right Sidebar is the sole Side Chat container.
@@ -37,6 +44,11 @@ export function apply(ctx: Context): void {
   const bringBack = createBringBack(ctx)
   const openSideChat = (): void => ctx.sidebarRight.openTab('side-chat')
   const currentSession = ctx.uiSession.adapter.current
+  const workspaceNavigation = ctx.get('uiWorkspace') as WorkspaceNavigation
+  const sessionList = ctx.sessions.list
+  const openNativeSession = (sessionId: string): void => {
+    workspaceNavigation.openSession(sessionId)
+  }
 
   ctx.effect(() => ctx.sidebarRightTabs.register({
     id: 'dsh-sidechat-side-chat',
@@ -61,7 +73,10 @@ export function apply(ctx: Context): void {
     ctx.slots.register({
       name: 'sidebar.right.pane.tab',
       key: 'dsh-sidechat-side-chat',
-      inject: () => ({ intent, api, bringBack, currentSession, catalog }),
+      inject: () => ({
+        intent, api, bringBack, currentSession, catalog,
+        sessionList, openNativeSession,
+      }),
     }, SideChatOverlay))
 
   ctx.slots.inject('shell.overlay', () =>

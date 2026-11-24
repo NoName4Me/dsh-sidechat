@@ -1,14 +1,26 @@
 import type { ReactNode } from 'react'
-import { IconBranchOutlineRegular, IconCopyOutlineRegular, IconCheckOutlineRegular, IconSearchOutlineRegular, IconTriangleRightFillRegular, Tooltip } from '@deepseek-ai/dsh-client-ui-primitives'
+import {
+  IconBranchOutlineRegular,
+  IconCheckOutlineRegular,
+  IconCloseOutlineRegular,
+  IconCopyOutlineRegular,
+  IconSearchOutlineRegular,
+  Tooltip,
+} from '@deepseek-ai/dsh-client-ui-primitives'
 
-export type SideChatGlyph = 'back' | 'send' | 'quote' | 'locate' | 'stop' | 'archive' | 'promote' | 'restore' | 'sparkle' | 'search' | 'copy' | 'check' | 'branch' | 'side-chat' | 'list'
+export type SideChatGlyph = 'back' | 'send' | 'quote' | 'locate' | 'stop' | 'archive' | 'promote' | 'restore' | 'sparkle' | 'search' | 'clear' | 'copy' | 'check' | 'branch' | 'side-chat' | 'list'
 
 export function SideChatIcon({ name }: { name: SideChatGlyph }): ReactNode {
   if (name === 'copy') return <IconCopyOutlineRegular />
   if (name === 'check') return <IconCheckOutlineRegular />
   if (name === 'search') return <IconSearchOutlineRegular />
+  if (name === 'clear') return <IconCloseOutlineRegular />
   if (name === 'branch') return <IconBranchOutlineRegular />
-  if (name === 'send') return <IconTriangleRightFillRegular />
+  if (name === 'send') return (
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8.3125.98a2.9 2.9 0 0 1 .95.452c.225.18.468.426.717.675l4.727 4.728-1.414 1.414L9 3.956v11.086H7V3.956L2.707 8.249 1.293 6.835l4.727-4.728c.25-.249.492-.494.717-.675a2.9 2.9 0 0 1 .95-.452c.21-.033.416-.025.625 0Z" fill="currentColor" />
+    </svg>
+  )
   if (name === 'side-chat') return (
     // Two overlapping bubbles, with the small conversation painted last and
     // fully occluding the main bubble, just like the Plugin Manager artwork.
@@ -24,7 +36,7 @@ export function SideChatIcon({ name }: { name: SideChatGlyph }): ReactNode {
   )
   const shared = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8,
     strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-  const paths: Record<Exclude<SideChatGlyph, 'copy'|'check'|'search'|'branch'|'send'|'side-chat'>, ReactNode> = {
+  const paths: Record<Exclude<SideChatGlyph, 'copy'|'check'|'search'|'clear'|'branch'|'send'|'side-chat'>, ReactNode> = {
     back: <path d="m15 18-6-6 6-6M9 12h12" />,
     quote: <><path d="M10 11H5V6h6v6l-4 5M20 11h-5V6h6v6l-4 5" /></>,
     locate: <><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" /><circle cx="12" cy="12" r="2" /></>,

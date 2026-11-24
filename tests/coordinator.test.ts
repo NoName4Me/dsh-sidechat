@@ -141,6 +141,9 @@ describe('SideChatCoordinator', () => {
     assert.equal(a.promotedSessionId, 'visible-note-1')
     assert.equal(b.promotedSessionId, a.promotedSessionId)
     assert.equal(f.promoted(), 1)
+    const repaired = await f.coordinator.promote('allowed-parent', note.id)
+    assert.equal(repaired.promotedSessionId, a.promotedSessionId)
+    assert.equal(f.promoted(), 2, 'repeat promotion repairs workspace placement')
     await rejectCode(
       f.coordinator.followup('allowed-parent', note.id, 'should use visible session'),
       'INVALID_STATE',

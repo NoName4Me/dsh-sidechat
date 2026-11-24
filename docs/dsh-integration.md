@@ -11,7 +11,7 @@
 | 创建独立 Agent / Session | `ctx.agents.create(…)` |
 | 恢复已创建的子 Agent | `ctx.agents.resume(…)` |
 | 追问或停止 | `agent.followup(…)` / `agent.cancel(…)` |
-| 隐藏与升格 | `ctx.workspaceRegistry.archiveSession(…)` / `unarchiveSession(…)` |
+| 隐藏、归组与升格 | `ctx.workspaceRegistry.archiveSession(…)` / `unarchiveSession(…)`，以及 `Workspace.attachSession(…)` |
 | 强制禁止工具 | Agent `setup` 内 `agentCtx.tools.guard(…)` |
 
 ### 侧聊创建
@@ -21,6 +21,7 @@
 - **Fork**：找到锚点所在（或紧随其后）第一个已完成的轮次，继承此前的主 Session 事件前缀。不得将源点之后的整条对话带入。
 - 两种模式均通过 DSH Agent 生命周期创建并持久化子 Session，不直接把单纯内存的 `ctx.sessions.fork()` 当作完整 Agent。
 - 子 Session 在空闲时归档隐藏；执行侧聊追问前暂时解除归档，空闲后重新归档。升格则公开同一个 Session，而不是复制消息。
+- 升格时先解析父 Session 所属工作区并把同一子 Session 附加进去，再解除归档。Client 继续展示侧聊详情，并在底部通过 `uiWorkspace.openSession()` 提供跳转；打开的正式会话自动使用原生主对话样式。
 - 插件持有并释放其创建/恢复的 Agent Handle；Host 卸载时必须清理。
 
 ### 元数据
@@ -55,7 +56,7 @@ RPC 封装限制请求体大小，并返回结构化错误。注意不要把 CLI
 - `shell.overlay`：文本选区胶囊扩展与消息右侧锚点。
 - `sidebarRightTabs.register(…)`：注册「旁敲侧击」原生右侧标签页。
 - `sidebar.right.pane.tab`：在标签页渲染目录及独立聊天 UI。
-- 消息历史通过读取 Session 投影并定期刷新；并非完全复用 DSH 主 Chat 的流式/富媒体组件。
+- 消息历史通过读取 Session 投影并定期刷新，正文复用 DSH 原生 `MarkdownText` body 渲染与代码高亮；流式传输、工具消息和富媒体仍由侧聊自己的轻量投影渲染。
 - 选区操作在 `pointerup` 后进入 DSH 原生引用胶囊。当前 DSH 的文本交互 Slot 是独占式，因此 Client 用 React Portal 附加一个操作，升级宿主时应重点回归此处。
 
 ### Client 打包格式

@@ -3,6 +3,7 @@ import type { SideChatCatalog } from './catalog.ts'
 import type { SideChatIntentStore } from './intent.ts'
 import { SideChatIcon } from './Icon.tsx'
 import { locateQuote, locateSource } from './source-anchor.ts'
+import { sideChatTitle } from './title.ts'
 
 interface CurrentSessionSource {
   getSnapshot(): { key?: string }
@@ -11,6 +12,7 @@ interface CurrentSessionSource {
 interface AnchorMark {
   id: string
   title: string
+  detail: string
   left: number
   top: number
 }
@@ -63,12 +65,20 @@ export function SideChatMarkers({ catalog, currentSession, intent, openSideChat 
         const key = note.anchor.messageId + ':' + Math.round(y / 18)
         const offset = occupied.get(key) ?? 0
         occupied.set(key, offset + 1)
-        next.push({ id: note.id, title: note.anchor.selectedText || note.title,
+        const question = state.questions[note.id]
+        next.push({
+          id: note.id,
+          title: question ? sideChatTitle(question) : note.title || '侧聊',
+          detail: note.anchor.selectedText || '未选择具体文字',
           left: x, top: y + offset * 24 })
       }
       setMarks(previous =>
         previous.length === next.length && previous.every((mark, i) =>
-          mark.id === next[i]?.id && mark.left === next[i]?.left && mark.top === next[i]?.top)
+          mark.id === next[i]?.id
+          && mark.title === next[i]?.title
+          && mark.detail === next[i]?.detail
+          && mark.left === next[i]?.left
+          && mark.top === next[i]?.top)
           ? previous : next)
     }
     const schedule = () => {
@@ -88,7 +98,7 @@ export function SideChatMarkers({ catalog, currentSession, intent, openSideChat 
       window.clearInterval(fallback)
       if (frame !== undefined) cancelAnimationFrame(frame)
     }
-  }, [notes])
+  }, [notes, state.questions])
   if (!sessionId || marks.length === 0) return null
   return (
     <div className="sc-anchor-markers" aria-label="消息侧聊锚点">
@@ -109,7 +119,7 @@ export function SideChatMarkers({ catalog, currentSession, intent, openSideChat 
           {hovered === mark.id && (
             <div className="sc-anchor-preview" role="tooltip">
               <div className="sc-anchor-preview-title">{mark.title}</div>
-              <div className="sc-anchor-preview-question">{state.questions[mark.id] || '尚未提出问题'}</div>
+              <div className="sc-anchor-preview-question">{mark.detail}</div>
             </div>
           )}
         </div>

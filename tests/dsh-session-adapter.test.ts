@@ -55,6 +55,7 @@ function fixture() {
     },
     async archive(id) { calls.push('archive:' + id) },
     async unarchive(id) { calls.push('unarchive:' + id) },
+    async promote(id, parentId) { calls.push('promote:' + id + ':' + parentId) },
     isNotFound(error) {
       return !!error && typeof error === 'object' &&
         'code' in error && error.code === 'SESSION_QUERY_SESSION_NOT_FOUND'
@@ -116,6 +117,7 @@ describe('DshSideSessionAdapter', () => {
     const f = fixture()
     await f.adapter.ensure(note(), { readOnly: true })
     assert.deepEqual(await f.adapter.promote(note()), { sessionId: sid })
+    assert.ok(f.calls.includes('promote:' + sid + ':parent'))
     await f.adapter.followup(sid, 'after promotion')
     await flush()
     assert.equal(f.calls.filter(x => x === 'archive:' + sid).length, 1)

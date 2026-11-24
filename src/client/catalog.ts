@@ -57,7 +57,7 @@ export class SideChatCatalog {
     const task = this.api.list(sessionId).then(notes => {
       if (this.state.sessionId !== sessionId) return
       this.publish({ notes: [...notes].sort((a, b) => a.createdAt.localeCompare(b.createdAt)) })
-      for (const note of notes.filter(note => note.status === 'active').slice(-40)) {
+      for (const note of notes.slice(-40)) {
         this.loadPreview(sessionId, note.id)
       }
     }).finally(() => {

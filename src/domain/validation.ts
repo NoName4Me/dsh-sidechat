@@ -60,8 +60,7 @@ export function normalizeCreate(input: CreateSideChatInput): Required<
   }
   const title = (
     input.title?.trim() ||
-    anchor.selectedText?.split(/\r?\n/u)[0]?.trim() ||
-    'New side chat'
+    '侧聊'
   ).slice(0, MAX_TITLE)
   return { parentSessionId, clientRequestId, anchor, title, mode }
 }
